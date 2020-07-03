@@ -1,12 +1,11 @@
 import React from 'react';
+import { Provider } from './Provider';
 
-export const withMouse = (WrapperComponent) => {
+export const connect = (
+  mapStateToProps,
+  mapDispatchToProps,
+) => (WrapperComponent) => {
   return class extends React.Component {
-    state = {
-      x: 0,
-      y: 0,
-    };
-
     componentDidMount() {
       window.addEventListener(
         'mousemove',
@@ -27,7 +26,11 @@ export const withMouse = (WrapperComponent) => {
 
     render() {
       return (
-        <WrapperComponent {...this.props} {...this.state} />
+        <Provider.Consumer>
+          {(store) => (
+            <WrapperComponent {...mapStateToProps(store)} />
+          )}
+        </Provider.Consumer>
       );
     }
   };

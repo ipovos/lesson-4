@@ -1,30 +1,44 @@
 import React from 'react';
-import { withMouse } from './Form';
+import { connect } from './Form';
 
 // presentational
-const Coordinates = (props) => {
+const Person = (props) => {
   return (
     <div>
-      <h1>X: {props.x}</h1>
-      <h1>Y: {props.y}</h1>
       <h1>Name: {props.name}</h1>
     </div>
   );
 };
 
 // presentational
-const CoordinatesEva = (props) => {
+const FancyPerson = (props) => {
   return (
     <div>
-      <h1>X: {props.x * 2}</h1>
-      <h1>Y: {props.y * 2}</h1>
-      <h1>Name: {props.name}</h1>
+      <h1 style={{ background: 'pink' }}>
+        Name: {props.name}
+      </h1>
     </div>
   );
 };
 
-const CoordinatesConnected = withMouse(Coordinates);
-const CoordinatesConnectedEva = withMouse(CoordinatesEva);
+const mapStateToPropsForPerson = (state) => ({
+  name: state.boy,
+});
+
+const PersonConnected = connect(mapStateToPropsForPerson)(
+  Person,
+);
+
+const mapStateToPropsForFancyPerson = (state) => ({
+  name: state.girl,
+});
+
+const FancyPersonConnected = connect(
+  mapStateToPropsForFancyPerson,
+)(FancyPerson);
+
+// const CoordinatesConnected = withMouse(Coordinates);
+// const CoordinatesConnectedEva = withMouse(CoordinatesEva);
 
 export class App extends React.Component {
   componentDidUpdate() {
@@ -33,8 +47,8 @@ export class App extends React.Component {
   render() {
     return (
       <div>
-        <CoordinatesConnected name="Viktor" />
-        <CoordinatesConnectedEva name="Eva" />
+        <PersonConnected />
+        <FancyPersonConnected />
       </div>
     );
   }

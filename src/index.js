@@ -4,7 +4,7 @@ import './index.css';
 import { App } from './App.jsx';
 import * as serviceWorker from './serviceWorker';
 
-import { ThemeContext } from './ThemeContext';
+import { Provider } from './Provider';
 
 class Root extends React.Component {
   constructor(props) {
@@ -33,20 +33,20 @@ class Root extends React.Component {
   render() {
     return (
       <React.StrictMode>
-        <ThemeContext.Provider
-          value={{
-            theme: this.state.theme,
-            toggle: this.toggle,
-          }}
-        >
-          <App />
-        </ThemeContext.Provider>
+        <App />
       </React.StrictMode>
     );
   }
 }
 
-ReactDOM.render(<Root />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider.Provider
+    value={{ boy: 'Evgen', girl: 'Daria' }}
+  >
+    <Root />
+  </Provider.Provider>,
+  document.getElementById('root'),
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
