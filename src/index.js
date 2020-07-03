@@ -4,7 +4,9 @@ import './index.css';
 import { App } from './App.jsx';
 import * as serviceWorker from './serviceWorker';
 
-import { Provider } from './Provider';
+import { Provider } from 'react-redux'
+
+import { store } from './store';
 
 class Root extends React.Component {
   constructor(props) {
@@ -40,11 +42,9 @@ class Root extends React.Component {
 }
 
 ReactDOM.render(
-  <Provider.Provider
-    value={{ boy: 'Evgen', girl: 'Daria' }}
-  >
+  <ThemeContext.Provider value={store}>
     <Root />
-  </Provider.Provider>,
+  </ThemeContext.Provider>,
   document.getElementById('root'),
 );
 

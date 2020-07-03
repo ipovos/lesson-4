@@ -6,30 +6,36 @@ export const connect = (
   mapDispatchToProps,
 ) => (WrapperComponent) => {
   return class extends React.Component {
+    static contextType = Provider;
+
     componentDidMount() {
-      window.addEventListener(
-        'mousemove',
-        this.handleMouseMove,
+      this.unsubscribe = this.context.subscribe(
+        this.handleStoreChange,
       );
     }
 
     componentWillUnmount() {
-      window.removeEventListener(
-        'mousemove',
-        this.handleMouseMove,
-      );
+      this.unsubscribe();
     }
 
-    handleMouseMove = (event) => {
-      this.setState({ x: event.screenX, y: event.screenY });
+    handleStoreChange = () => {
+      this.forceUpdate();
     };
 
     render() {
       return (
         <Provider.Consumer>
-          {(store) => (
-            <WrapperComponent {...mapStateToProps(store)} />
-          )}
+          <WrapperComponent
+            {...mapStateToProps(
+              this.context.getState(),
+              this.props,
+            )}
+            {...mapDispatchToProps(
+              this.context.dispatch,
+              this.props,
+            )}
+            {...this.props}
+          />
         </Provider.Consumer>
       );
     }

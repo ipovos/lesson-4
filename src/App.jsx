@@ -1,54 +1,47 @@
 import React from 'react';
-import { connect } from './Form';
+import { changeName } from './store';
+// import { connect } from './Form';
+
+import { connect } from 'react-redux';
 
 // presentational
 const Person = (props) => {
   return (
     <div>
       <h1>Name: {props.name}</h1>
-    </div>
-  );
-};
-
-// presentational
-const FancyPerson = (props) => {
-  return (
-    <div>
-      <h1 style={{ background: 'pink' }}>
-        Name: {props.name}
-      </h1>
+      <button type="button" onClick={props.changeName}>
+        Change name
+      </button>
     </div>
   );
 };
 
 const mapStateToPropsForPerson = (state) => ({
-  name: state.boy,
+  name: state.name,
 });
 
-const PersonConnected = connect(mapStateToPropsForPerson)(
-  Person,
-);
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    changeName: () =>
+      dispatch(changeName(ownProps.nameToChange)),
+    fetchProduct: () => dispatch(thunk),
+  };
+};
 
-const mapStateToPropsForFancyPerson = (state) => ({
-  name: state.girl,
-});
-
-const FancyPersonConnected = connect(
-  mapStateToPropsForFancyPerson,
-)(FancyPerson);
-
-// const CoordinatesConnected = withMouse(Coordinates);
-// const CoordinatesConnectedEva = withMouse(CoordinatesEva);
+const PersonConnected = connect(
+  mapStateToPropsForPerson,
+  mapDispatchToProps,
+)(Person);
 
 export class App extends React.Component {
-  componentDidUpdate() {
-    console.log('didUpdate');
-  }
   render() {
     return (
       <div>
-        <PersonConnected />
-        <FancyPersonConnected />
+        <ThemeContext.Consumer>
+          {(context) => (
+            <PersonConnected nameToChange={context} />
+          )}
+        </ThemeContext.Consumer>
       </div>
     );
   }
