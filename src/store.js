@@ -1,6 +1,5 @@
-// import { configureStore } from './redux';
-
-import { createStore } from 'redux';
+import { createStore, applyMiddleware } from './redux';
+import { thunk } from './redux-thunk';
 
 const initialState = {
   name: 'Daria',
@@ -14,8 +13,10 @@ const reducer = (state = initialState, action) => {
         name: action.payload,
       };
     }
+    default: {
+      return state;
+    }
   }
-  return state;
 };
 
 export const changeName = (name) => {
@@ -25,4 +26,7 @@ export const changeName = (name) => {
   };
 };
 
-export const store = createStore(reducer);
+export const store = createStore(
+  reducer,
+  applyMiddleware([thunk]),
+);

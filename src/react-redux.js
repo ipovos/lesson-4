@@ -1,12 +1,17 @@
 import React from 'react';
-import { Provider } from './Provider';
+
+const Context = React.createContext(null);
+
+export const Provider = ({ store, ...restProps }) => {
+  return <Context.Provider value={store} {...restProps} />;
+};
 
 export const connect = (
   mapStateToProps,
   mapDispatchToProps,
 ) => (WrapperComponent) => {
   return class extends React.Component {
-    static contextType = Provider;
+    static contextType = Context;
 
     componentDidMount() {
       this.unsubscribe = this.context.subscribe(
@@ -21,22 +26,14 @@ export const connect = (
     handleStoreChange = () => {
       this.forceUpdate();
     };
-
     render() {
+      const { getState, dispatch } = this.context;
       return (
-        <Provider.Consumer>
-          <WrapperComponent
-            {...mapStateToProps(
-              this.context.getState(),
-              this.props,
-            )}
-            {...mapDispatchToProps(
-              this.context.dispatch,
-              this.props,
-            )}
-            {...this.props}
-          />
-        </Provider.Consumer>
+        <WrapperComponent
+          {...mapStateToProps(getState(), this.props)}
+          {...mapDispatchToProps(dispatch, this.props)}
+          {...this.props}
+        />
       );
     }
   };

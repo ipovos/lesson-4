@@ -1,25 +1,20 @@
-export const configureStore = (reducer) => {
-  const listeners = [];
-  const middlares = [];
+export const createStore = (reducer, enhancer) => {
+  if (enhancer) {
+    return enhancer(createStore)(reducer);
+  }
+
+  let listeners = [];
 
   let state = reducer(undefined, {
     type: '@@init',
   });
 
-  const thunk = (productId) => (dispatch, getState) => {
-    api
-      .getProduct(productId)
-      .then((product) => dispatch(addProduct(product)))
-      .catch((error) => dispatch(productError(error)));
-  };
+  const getState = () => state;
 
   const dispatch = (action) => {
-    state = reducer(action);
+    state = reducer(getState(), action);
     listeners.forEach((func) => func(getState()));
-    listeners.forEach((func) => func(action));
   };
-
-  const getState = () => ({ ...state });
 
   const subscribe = (func) => {
     listeners.push(func);
@@ -35,5 +30,37 @@ export const configureStore = (reducer) => {
     dispatch,
     getState,
     subscribe,
+  };
+};
+
+export const compose = (funcs) => (args) => {
+  return funcs.reduce((acc, func) => func(acc), args);
+};
+
+export const applyMiddleware = (middlewares) => {
+  return (createStore) => (reducer) => {
+    const store = createStore(reducer);
+
+    let innerDispatch = () => {
+      console.log(
+        'Dispatching while constructing your middleware is not allowed.',
+      );
+    };
+
+    const middlewareAPI = {
+      getState: store.getState,
+      dispatch: (action) => innerDispatch(action),
+    };
+
+    const chain = middlewares.map((middleware) =>
+      middleware(middlewareAPI),
+    );
+
+    innerDispatch = compose(chain)(store.dispatch);
+
+    return {
+      ...store,
+      dispatch: innerDispatch,
+    };
   };
 };

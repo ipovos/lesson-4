@@ -4,34 +4,10 @@ import './index.css';
 import { App } from './App.jsx';
 import * as serviceWorker from './serviceWorker';
 
-import { Provider } from 'react-redux'
-
 import { store } from './store';
+import { Provider } from './react-redux';
 
 class Root extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      theme: 'dark',
-    };
-  }
-
-  toggle = () => {
-    console.log('toggle');
-    this.setState(
-      (prevState) => {
-        return {
-          theme:
-            prevState.theme === 'dark' ? 'red' : 'dark',
-        };
-      },
-      () => {
-        console.log(this.state);
-      },
-    );
-  };
-
   render() {
     return (
       <React.StrictMode>
@@ -42,9 +18,9 @@ class Root extends React.Component {
 }
 
 ReactDOM.render(
-  <ThemeContext.Provider value={store}>
+  <Provider store={store}>
     <Root />
-  </ThemeContext.Provider>,
+  </Provider>,
   document.getElementById('root'),
 );
 

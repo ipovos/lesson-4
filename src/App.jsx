@@ -1,10 +1,7 @@
 import React from 'react';
 import { changeName } from './store';
-// import { connect } from './Form';
+import { connect } from './react-redux';
 
-import { connect } from 'react-redux';
-
-// presentational
 const Person = (props) => {
   return (
     <div>
@@ -12,19 +9,35 @@ const Person = (props) => {
       <button type="button" onClick={props.changeName}>
         Change name
       </button>
+      <button type="button" onClick={props.tryChangeName}>
+        Try change name
+      </button>
     </div>
   );
 };
 
+const nameSelector = (state) => state.name;
+
 const mapStateToPropsForPerson = (state) => ({
-  name: state.name,
+  name: nameSelector(state),
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     changeName: () =>
       dispatch(changeName(ownProps.nameToChange)),
-    fetchProduct: () => dispatch(thunk),
+
+    tryChangeName: () =>
+      dispatch((dispatch, getState) => {
+        if (
+          nameSelector(getState()) === ownProps.nameToChange
+        ) {
+          dispatch(changeName('Gena'));
+          return;
+        }
+
+        dispatch(changeName(ownProps.nameToChange));
+      }),
   };
 };
 
@@ -37,11 +50,7 @@ export class App extends React.Component {
   render() {
     return (
       <div>
-        <ThemeContext.Consumer>
-          {(context) => (
-            <PersonConnected nameToChange={context} />
-          )}
-        </ThemeContext.Consumer>
+        <PersonConnected nameToChange="Viktor" />
       </div>
     );
   }
